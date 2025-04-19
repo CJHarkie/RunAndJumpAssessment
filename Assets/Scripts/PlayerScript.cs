@@ -1,15 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class PlayerScript : MonoBehaviour
 {
     private CharacterController Controller;
-    public float Speed = 25f;
-    public float JumpHeight = 10f;
-    public float Gravity = 15f;
+    public float Speed = 40f;
+    public float JumpHeight = 20f;
+    public float Gravity = 20f;
+    public float PushForce = 5f;
     private Vector3 MoveDirection = Vector3.zero;
+    [SerializeField] private TextMeshProUGUI ValuableText;
+    public int Valuables = 0;
 
     void Start()
     {
@@ -46,29 +51,30 @@ public class PlayerScript : MonoBehaviour
         }
 
         Controller.Move(MoveDirection * Time.deltaTime);
-        Debug.Log("Grounded: " + Controller.isGrounded);
-        Debug.Log(MoveDirection);
+    }
 
-        //if (Controller.isGrounded)
-        //{
-        //    MoveDirection = Vector3.zero;
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Item"))
+        {
+            Valuables++;
+            ValuableText.text = "Valuables: " + Valuables;
+            Debug.Log("Valuables: " + Valuables);
+            Destroy(other.gameObject);
+        }
+    }
 
-        //    if (Input.GetKey(KeyCode.Space))
-        //    {
-        //        MoveDirection.y = JumpHeight;
-        //    }
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        Rigidbody body = hit.collider.attachedRigidbody;
 
-        //    if (Input.GetKey(KeyCode.A))
-        //    {
-        //        MoveDirection += -transform.right * Speed;
-        //    }
+        // Only push non-kinematic rigidbodies
+        if (body != null && !body.isKinematic)
+        {
+            Vector3 pushDir = hit.moveDirection;
+            pushDir.y = 0; // No vertical force
+            body.AddForce(pushDir * PushForce, ForceMode.Impulse);
 
-        //    if (Input.GetKey(KeyCode.D))
-        //    {
-        //        MoveDirection += transform.right * Speed;
-        //    }
-        //}
-        //MoveDirection.y -= Gravity * Time.deltaTime;
-        //Controller.Move(MoveDirection * Time.deltaTime);
+        }
     }
 }
