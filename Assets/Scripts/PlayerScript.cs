@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 public class PlayerScript : MonoBehaviour
 {
+    # Every Variable that had to be defined for this code
     private CharacterController Controller;
     public float Speed = 40f;
     public float JumpHeight = 20f;
@@ -23,16 +24,19 @@ public class PlayerScript : MonoBehaviour
 
     void Update()
     {
+        # This function makes the character move forward on its own
         Vector3 move = new Vector3(0, 1, 0);
-        move = transform.forward * Speed * Time.deltaTime;
+        move = transform.forward * Speed * Time.deltaTime; 
         Controller.Move(move);
-
+        
+        # This function makes the character move side to side
         float moveX = 0;
         if (Input.GetKey(KeyCode.A)) moveX = -1;
         if (Input.GetKey(KeyCode.D)) moveX = 1;
 
         move = transform.right * moveX * Speed;
 
+        # This if statement is for how the character jumps when the character is grounded
         if (Controller.isGrounded)
         {
             MoveDirection = move;
@@ -53,6 +57,7 @@ public class PlayerScript : MonoBehaviour
         Controller.Move(MoveDirection * Time.deltaTime);
     }
 
+    # This bracket is for showing the valuable counter on the screen using TextMeshPro and making sure the valuables disappear once collided with by the character
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Item"))
@@ -64,6 +69,7 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
+    # This bracket is for crashing into certain objects with a rigidbody which lets the object get pushed once the character collides with it
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
         Rigidbody body = hit.collider.attachedRigidbody;
